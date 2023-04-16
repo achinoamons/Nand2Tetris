@@ -1,0 +1,15 @@
+//A class that gives a number (0-3) to each direction in order that we can treat the same way to all the directions
+class Directions {
+	function int down() {
+		return 0;
+	}
+	function int left() {
+		return 1;
+	}
+	function int up() {
+		return 2;
+	}
+	function int right() {
+		return 3;
+	}
+}

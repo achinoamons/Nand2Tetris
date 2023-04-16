@@ -1,0 +1,168 @@
+function Game.new 0
+push constant 3
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+call Grid.new 1
+pop this 0
+push constant 0
+pop this 1
+push constant 0
+pop this 2
+push pointer 0
+return
+function Game.dispose 0
+push argument 0
+pop pointer 0
+push this 0
+call Grid.dispose 1
+pop temp 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function Game.init 1
+push argument 0
+pop pointer 0
+push pointer 0
+call Game.print_state 1
+pop temp 0
+push this 0
+call Grid.print 1
+pop temp 0
+label WHILE_EXP0
+push this 0
+call Grid.stuck 1
+not
+not
+if-goto WHILE_END0
+push pointer 0
+call Game.input_direction 1
+pop local 0
+push this 0
+push local 0
+call Grid.can_shift 2
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 1
+push this 0
+push local 0
+call Grid.shift 2
+add
+pop this 1
+push this 2
+push constant 1
+add
+pop this 2
+push pointer 0
+call Game.print_state 1
+pop temp 0
+push this 0
+call Grid.print 1
+pop temp 0
+label IF_FALSE0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function Game.print_state 0
+push argument 0
+pop pointer 0
+call Utils.clear 0
+pop temp 0
+call Strings.get_stats_dashes 0
+call Output.printString 1
+pop temp 0
+call Output.println 0
+pop temp 0
+call Strings.get_moves 0
+call Output.printString 1
+pop temp 0
+push this 2
+call Output.printInt 1
+pop temp 0
+call Output.println 0
+pop temp 0
+call Strings.get_score 0
+call Output.printString 1
+pop temp 0
+push this 1
+call Output.printInt 1
+pop temp 0
+call Output.println 0
+pop temp 0
+call Strings.get_stats_dashes 0
+call Output.printString 1
+pop temp 0
+call Output.println 0
+pop temp 0
+push constant 0
+return
+function Game.input_direction 1
+push argument 0
+pop pointer 0
+label WHILE_EXP0
+push constant 0
+not
+not
+if-goto WHILE_END0
+call Keyboard.readChar 0
+pop local 0
+push local 0
+push constant 133
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+call Directions.down 0
+return
+label IF_FALSE0
+push local 0
+push constant 130
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+call Directions.left 0
+return
+label IF_FALSE1
+push local 0
+push constant 131
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+call Directions.up 0
+return
+label IF_FALSE2
+push local 0
+push constant 132
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+call Directions.right 0
+return
+label IF_FALSE3
+goto WHILE_EXP0
+label WHILE_END0
+push constant 1
+neg
+return
+function Game.get_moves 0
+push argument 0
+pop pointer 0
+push this 2
+return
+function Game.get_points 0
+push argument 0
+pop pointer 0
+push this 1
+return
+function Game.get_grid 0
+push argument 0
+pop pointer 0
+push this 0
+return

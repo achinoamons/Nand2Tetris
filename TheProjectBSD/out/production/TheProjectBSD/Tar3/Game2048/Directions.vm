@@ -1,0 +1,12 @@
+function Directions.down 0
+push constant 0
+return
+function Directions.left 0
+push constant 1
+return
+function Directions.up 0
+push constant 2
+return
+function Directions.right 0
+push constant 3
+return

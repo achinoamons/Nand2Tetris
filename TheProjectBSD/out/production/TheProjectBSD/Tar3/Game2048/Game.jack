@@ -1,0 +1,85 @@
+//A class that defines the game with all the needed elements
+class Game {
+	field Grid grid;
+	field int points, moves;
+
+	constructor Game new(int grid_size) {
+		let grid = Grid.new(grid_size);
+		let points = 0;
+		let moves = 0;
+		return this;
+	}
+
+	method void dispose() {
+		do grid.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method void init() {
+		var int direction;
+		do print_state();
+		do grid.print();
+		//Continue playing as long as the grid is not get stuck
+		while (~grid.stuck()) {
+			let direction = input_direction();
+			if (grid.can_shift(direction)) {
+				let points = points + grid.shift(direction);
+				let moves=moves+1;
+				do print_state();
+				do grid.print();
+			}
+		}
+		return;
+	}
+
+	method void print_state() {
+		// Clear Screen
+		do Utils.clear();
+		// Print Stats
+		do Output.printString(Strings.get_stats_dashes());
+		do Output.println();
+		do Output.printString(Strings.get_moves());
+		do Output.printInt(moves);
+		do Output.println();
+		do Output.printString(Strings.get_score());
+		do Output.printInt(points);
+		do Output.println();
+		do Output.printString(Strings.get_stats_dashes());
+		do Output.println();
+		return;
+	}
+
+	// returns the input direction
+	method int input_direction() {
+		var int key;
+		while (true) {
+			let key = Keyboard.readChar();
+			if (key = 133) {
+				return Directions.down();
+			}
+			if (key = 130) {
+				return Directions.left();
+			}
+			if (key = 131) {
+				return Directions.up();
+			}
+			if (key = 132) {
+				return Directions.right();
+			}
+		}
+		return -1;
+	}
+
+	method int get_moves() {
+		return moves;
+	}
+
+	method int get_points() {
+		return points;
+	}
+
+	method int get_grid() {
+		return grid;
+	}
+}

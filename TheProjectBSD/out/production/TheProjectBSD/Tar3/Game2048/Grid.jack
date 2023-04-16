@@ -1,0 +1,301 @@
+//A class that defines a grid with all the needed functions for grid in the game like moving,joining etc....
+class Grid {
+	field Array grid;
+	field int size;
+	field RelGrid rel_grid;
+
+	// construct a square grid of sizeXsize
+	constructor Grid new(int _size) {
+		var int i;
+		let size = _size;
+		let grid = Array.new(size);
+		let i = 0;
+		while (i < size) {
+			let grid[i] = Array.new(size);
+			let i = i + 1;
+		}
+		do insert_tile();
+		do insert_tile();
+		let rel_grid = RelGrid.new(size);
+		return this;
+	}
+
+	method void dispose() {
+		var int i;
+		var Array arr;
+		let i = 0;
+		while (i < size) {
+			let arr = grid[i];
+			do arr.dispose();
+			let i = i + 1;
+		}
+		do grid.dispose();
+		do rel_grid.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	// moves all tiles as far as possible in the given direction without merging
+	method void move(int direction) {
+		var int x, y, lowest_empty, x0, y0, x1, y1;
+		var Array rel_grid_dir, rel_grid_dir_x, grid_x0, grid_x1;
+		var Coordinate c;
+		let rel_grid_dir = rel_grid.direction(direction);
+		let x = 0;
+		while (x < size) {
+			let lowest_empty = -1;
+			let y = 0;
+			while (y < size) {
+				let rel_grid_dir_x = rel_grid_dir[x];
+				let c = rel_grid_dir_x[y];
+				let x0 = c.get_x();
+				let y0 = c.get_y();
+				let grid_x0 = grid[x0];
+				if (~(grid_x0[y0] = 0)) {
+					if (~(lowest_empty = -1)) {
+						let c = rel_grid_dir_x[lowest_empty];
+						let x1 = c.get_x();
+						let y1 = c.get_y();
+						let grid_x0 = grid[x0];
+						let grid_x1 = grid[x1];
+						let grid_x1[y1] = grid_x0[y0];
+						let grid_x0[y0] = 0;
+						let lowest_empty = lowest_empty + 1;
+					}
+				} else {
+					if (lowest_empty = -1) {
+						let lowest_empty = y;
+					}
+				}
+				let y = y + 1;
+			}
+			let x = x + 1;
+		}
+		return;
+	}
+
+	// joins all adjacent equal squares and returns the nubmer of points gained in the process
+	method int join(int direction) {
+		var int x, y, bottom_x, bottom_y, val, double_val, points;
+		var Array rel_grid_dir, rel_grid_dir_x, grid_bottom_x, grid_top_x;
+		var Coordinate c;
+		let rel_grid_dir = rel_grid.direction(direction);
+		let points = 0;
+		let x = 0;
+		while (x < size) {
+			let rel_grid_dir_x = rel_grid_dir[x];
+			let y = 0;
+			while (y < (size - 1)) {
+				let c = rel_grid_dir_x[y];
+				let bottom_x = c.get_x();
+				let bottom_y = c.get_y();
+				let grid_bottom_x = grid[bottom_x];
+				let val = grid_bottom_x[bottom_y];
+				if (~(val = 0)) {
+					let c = rel_grid_dir_x[y + 1];
+					let grid_top_x = grid[c.get_x()];
+					if (val = grid_top_x[c.get_y()]) {
+						let double_val = val * 2;
+						let grid_bottom_x[bottom_y] = double_val;
+						let grid_top_x[c.get_y()] = 0;
+						let points = points + double_val;
+					}
+				}
+				let y = y + 1;
+			}
+			let x = x + 1;
+		}
+		return points;
+	}
+
+	// moves all tiles as far possible in the given direction, merging when appropriate
+	// returns number of points gained
+	method int shift(int direction) {
+		var int points;
+		do move(direction);
+		let points = join(direction);
+		do move(direction);
+		do insert_tile();
+		return points;
+	}
+
+	// returns the number of empty squares in the grid
+	method int empty_squares() {
+		var int i, j, count;
+		var Array grid_i;
+		let i = 0;
+		let j = 0;
+		let count = 0;
+		while (i < size) {
+			while (j < size) {
+				let grid_i = grid[i];
+				if (grid_i[j] = 0) {
+					let count = count + 1;
+				}
+				let j = j + 1;
+			}
+			let i = i + 1;
+		}
+		return count;
+	}
+
+	// returns the coordinates of a random empty square
+	method Coordinate rand_empty_square() {
+		var int empty, counter, i, j;
+		var Array grid_i;
+		let empty = empty_squares();
+		let counter = Random.randRange(0, empty - 1);
+		let i = 0;
+		let j = 0;
+		while (i < size) {
+			while (j < size) {
+				let grid_i = grid[i];
+				if (grid_i[j] = 0) {
+					if (counter = 0) {
+						return Coordinate.new(i , j);
+					}
+					let counter = counter - 1;
+				}
+				let j = j + 1;
+			}
+			let i = i + 1;
+		}
+		// if no square is empty return (0, 0) but that should not happen
+		return Coordinate.new(0, 0);
+	}
+
+	// function that gets a number to insert (either 2 or 4) and places it in a random empty square.
+	method void insert_tile() {
+		var Array grid_x;
+		var Coordinate c;
+		let c = rand_empty_square();
+		let grid_x = grid[c.get_x()];
+		let grid_x[c.get_y()] = get_new_tile();
+		do c.dispose();
+		return;
+	}
+
+	// return the value of a new tile to insert. 9/10 times will be 2, 1/10 times will be 4
+	method int get_new_tile() {
+		if(Random.randRange(0, 9) = 4) {
+			return 4;
+		}
+		return 2;
+	}
+
+	// returns whether or not the grid has empty squares
+	method boolean has_empty() {
+		var int x, y;
+		var Array grid_x;
+		let x = 0;
+		while (x < size) {
+			let y = 0;
+			while (y < size) {
+				let grid_x = grid[x];
+				if (grid_x[y] = 0) {
+					return true;
+				}
+				let y = y + 1;
+			}
+			let x = x + 1;
+		}
+		return false;
+	}
+
+	// returns whether or not the grid can be shifted in the given direction
+	method boolean can_shift(int direction) {
+		// x and y iterate over the relative grid (skipping the bottom row)
+		var int x, y, curr_val, under_val;
+		var Array rel_grid_dir, rel_grid_dir_x, grid_curr_x, grid_under_x;
+		var Coordinate curr, under;
+		let rel_grid_dir = rel_grid.direction(direction);
+		let x = 0;
+		while (x < size) {
+			let rel_grid_dir_x = rel_grid_dir[x];
+			let y = 1;
+			while (y < size) {
+				let curr = rel_grid_dir_x[y];
+				let under = rel_grid_dir_x[y - 1];
+				let grid_curr_x = grid[curr.get_x()];
+				let curr_val = grid_curr_x[curr.get_y()];
+				let grid_under_x = grid[under.get_x()];
+				let under_val = grid_under_x[under.get_y()];
+				if (~(curr_val = 0) & ((under_val = 0) | (under_val = curr_val))) {
+					return true;
+				}
+				let y = y + 1;
+			}
+			let x = x + 1;
+		}
+		return false;
+	}
+
+	// returns weather or not the grid is in a position where it cannot move in any direction
+	method boolean stuck() {
+		return ~(has_empty() | can_shift(Directions.up()) | can_shift(Directions.down()) | can_shift(Directions.left()) | can_shift(Directions.right()));
+	}
+
+	method void print() {
+		var int i, x, y, value, length;
+		var Array grid_y;
+
+		// Print Grid
+		do Output.printString(Strings.get_underscores_1());
+		let i = 1;
+		while (i < size) {
+			do Output.printString(Strings.get_underscores_2());
+			let i = i + 1;
+		}
+		do Output.println();
+		let x = 0;
+		while (x < size) {
+			let i = 0;
+			while (i < size) {
+				do Output.printString(Strings.get_bar_with_spaces());
+				let i = i + 1;
+			}
+			do Output.printString(Strings.get_bar());
+			do Output.println();
+			let y = 0;
+			while (y < size) {
+				//	Get number of digits in value
+				let grid_y = grid[y];
+				let value = grid_y[size - 1 - x];
+				let length = Utils.digits(value);
+				let i = 1;
+				do Output.printString(Strings.get_bar());
+				do Output.printString(Strings.get_space());
+				if (length < 4){
+					do Output.printString(Strings.get_space());
+				}
+				if (length < 2) {
+					do Output.printString(Strings.get_space());
+				}
+				if (~(value = 0)) {
+					do Output.printInt(value);
+				}
+				if (length < 5) {
+					do Output.printString(Strings.get_space());
+				}
+				if (length < 3) {
+					do Output.printString(Strings.get_space());
+				}
+				if (length < 1) {
+					do Output.printString(Strings.get_space());
+				}
+				let y = y + 1;
+			}
+			do Output.printString(Strings.get_bar());
+			do Output.println();
+			let i = 0;
+			while (i < size) {
+				do Output.printString(Strings.get_bar_with_underscores());
+				let i = i + 1;
+			}
+			do Output.printString(Strings.get_bar());
+			do Output.println();
+			let x = x + 1;
+		}
+		return;
+	}
+}

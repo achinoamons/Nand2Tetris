@@ -1,0 +1,17 @@
+//Achinoam Monsonego 206552382
+//Shulamit Nahon 323782854
+
+class Main {
+	function void main () {
+		var int grid_size;
+		var Game game;
+		do Random.setSeed(1);
+		do Strings.init();
+		let grid_size = Keyboard.readInt("Choose a grid size [4-5]: ");
+		//initialize a game with the size of grid that we got from user
+		let game = Game.new(grid_size);
+		do game.init();
+		do game.dispose();
+		return;
+	}
+}
