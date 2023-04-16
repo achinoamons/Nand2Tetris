@@ -1,0 +1,156 @@
+ // vm command: push constant
+@0
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// vm command: pop local
+@LCL
+D=M
+@SP
+A=M
+M=D
+@0
+D=A
+@SP
+A=M
+M=D+M
+@SP
+A=M-1
+D=M
+@SP
+A=M
+A=M
+M=D
+@SP
+M=M-1
+// vm command: label
+(BasicLoop.LOOP_START)
+// vm command: push argument
+@0
+D=A
+@ARG
+A=M+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// vm command: push local
+@0
+D=A
+@LCL
+A=M+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// vm command: add
+@SP
+A=M-1
+D=M
+A=A-1
+M=D+M
+@SP
+M=M-1
+// vm command: pop local
+@LCL
+D=M
+@SP
+A=M
+M=D
+@0	
+D=A
+@SP
+A=M
+M=D+M
+@SP
+A=M-1
+D=M
+@SP
+A=M
+A=M
+M=D
+@SP
+M=M-1
+// vm command: push argument
+@0
+D=A
+@ARG
+A=M+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// vm command: push constant
+@1
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// vm command: sub
+@SP
+A=M-1
+D=M
+A=A-1
+M=M-D
+@SP
+M=M-1
+// vm command: pop argument
+@ARG
+D=M
+@SP
+A=M
+M=D
+@0
+D=A
+@SP
+A=M
+M=D+M
+@SP
+A=M-1
+D=M
+@SP
+A=M
+A=M
+M=D
+@SP
+M=M-1
+// vm command: push argument
+@0
+D=A
+@ARG
+A=M+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+// vm command: if_goto
+@SP
+M=M-1
+A=M
+D=M
+@BasicLoop.LOOP_START
+D;JNE
+// vm command: push local
+@0
+D=A
+@LCL
+A=M+D
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
