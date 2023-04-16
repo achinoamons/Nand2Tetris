@@ -1,0 +1,41 @@
+//A class that defines a point on a plane
+class Coordinate {
+	field int x;
+	field int y;
+
+	constructor Coordinate default() {
+		let x = 0;
+		let y = 0;
+		return this;
+	}
+
+	constructor Coordinate new(int _x, int _y) {
+		let x = _x;
+		let y = _y;
+		return this;
+	}
+
+	method void dispose() {
+		//De-allocates the given object and frees its memory space
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method int get_x() {
+		return x;
+	}
+
+	method int get_y() {
+		return y;
+	}
+
+	method void set_x(int _x) {
+		let x = _x;
+		return;
+	}
+
+	method void set_y(int _y) {
+		let y = _y;
+		return;
+	}
+}

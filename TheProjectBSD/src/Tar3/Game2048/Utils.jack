@@ -1,0 +1,43 @@
+/* 
+ *A class that contains general functions that we needed
+ *
+*/
+
+class Utils {
+
+    /* returns a % b */
+    function int mod(int a, int b) {
+        var int d;
+        var int r;
+        let d = a / b;
+        let r = a - (b * d);
+        return r;
+    }
+
+	function void clear() {
+		do Screen.clearScreen();
+		//moves the cursor to the j-th column of the i-th row, and erases the character displayed there
+		do Output.moveCursor(0,0);
+		return;
+	}
+
+	// returns number of digits in a positive integer n-we need it to know how many spaces to prepare before and after the num is printed in the square
+	function int digits(int n) {
+		if (n = 0) {
+			return 0;
+		}
+		if (n < 10) {
+			return 1;
+		}
+		if (n < 100) {
+			return 2;
+		}
+		if (n < 1000) {
+			return 3;
+		}
+		if (n < 10000) {
+			return 4;
+		}
+		return 5;
+	}
+}

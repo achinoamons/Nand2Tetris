@@ -1,0 +1,74 @@
+class RelGrid {
+	field Array rel_grid;
+	field int size;
+
+	// Define rel_grid as an array with 4 elements. Each element will contain a multidimensional array similar to grid just that instead of containing the number that goes in each square, it will contain coordinates to get the actual value from grid, just as if the rel_grid was rotated d times clockwise. The purpose of this variable is to be able to manipulate the grid in the same way, no matter which direction the user wants to click.
+	constructor RelGrid new(int _size) {
+		var int d, x, y;
+		var Array rel_grid_d, rel_grid_d_x, prev_rel_grid, prev_rel_grid_x;
+		var Coordinate c, prev_c;
+		let rel_grid = Array.new(4); // One for each direction
+		let size = _size;
+		let d = 0;
+		while (d < 4) {
+			let rel_grid[d] = Array.new(size);
+			let rel_grid_d = rel_grid[d];
+			let x = 0;
+			while (x < size) {
+				let rel_grid_d[x] = Array.new(size);
+				let rel_grid_d_x = rel_grid_d[x];
+				let y = 0;
+				while (y < size) {
+					let rel_grid_d_x[y] = Coordinate.default();
+					let c = rel_grid_d_x[y];
+					if (d = 0) {
+						do c.set_x(x);
+						do c.set_y(y);
+					} else {
+						let prev_rel_grid = rel_grid[d - 1];
+						let prev_rel_grid_x = prev_rel_grid[x];
+						let prev_c = prev_rel_grid_x[y];
+						do c.set_x(prev_c.get_y());
+						do c.set_y(size - 1 - prev_c.get_x());
+					}
+					let y = y + 1;
+				}
+				let x = x + 1;
+			}
+			let d = d + 1;
+		}
+		return this;
+	}
+
+	method void dispose() {
+		var int d, x, y;
+		var Array rel_grid_d, rel_grid_d_x;
+		var Coordinate c;
+		let d = 0;
+		while (d < 4) {
+			let rel_grid_d = rel_grid[d];
+			let x = 0;
+			while (x < size) {
+				let rel_grid_d_x = rel_grid_d[x];
+				let y = 0;
+				while (y < size) {
+					let c = rel_grid_d_x[y];
+					do c.dispose();
+					let y = y + 1;
+				}
+				do rel_grid_d_x.dispose();
+				let x = x + 1;
+			}
+			do rel_grid_d.dispose();
+			let d = d + 1;
+		}
+		do rel_grid.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	// returns the relative grid for the given direction
+	method Array direction(int d) {
+		return rel_grid[d];
+	}
+}

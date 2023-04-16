@@ -1,0 +1,53 @@
+//A class that declares on strings in order to draw the board with squares,and has getters to the strings
+class Strings {
+	static String stats_dashes, moves, score, underscores_1, underscores_2, bar_with_spaces, bar, space, bar_with_underscores;
+
+	function void init () {
+		let stats_dashes = "-----------------------------";
+		let moves = "Moves: ";
+		let score = "Score: ";
+		let underscores_1 = " ______";
+		let underscores_2 = "_______";
+		let bar_with_spaces = "|      ";
+		let bar = "|";
+		let space = " ";
+		let bar_with_underscores = "|______";
+		return;
+	}
+
+	function String get_stats_dashes () {
+		return stats_dashes;
+	}
+
+	function String get_moves () {
+		return moves;
+	}
+
+	function String get_score () {
+		return score;
+	}
+
+	function String get_underscores_1() {
+		return underscores_1;
+	}
+
+	function String get_underscores_2() {
+		return underscores_2;
+	}
+
+	function String get_bar_with_spaces() {
+		return bar_with_spaces;
+	}
+
+	function String get_bar() {
+		return bar;
+	}
+
+	function String get_space() {
+		return space;
+	}
+
+	function String get_bar_with_underscores() {
+		return bar_with_underscores;
+	}
+}
